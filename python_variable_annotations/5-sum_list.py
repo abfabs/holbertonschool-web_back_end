@@ -1,8 +1,19 @@
 #!/usr/bin/env python3
-"""Module 5-sum_list: type-annotated function sum_list that sums a list of floats."""
+"""
+This module contains a function to sum a list of floats.
+"""
+
 from typing import List
 
 
 def sum_list(input_list: List[float]) -> float:
-    """Return the sum of all floats in input_list."""
+    """
+    Sum all floats in a list and return the total.
+
+    Args:
+        input_list (List[float]): List of float numbers.
+
+    Returns:
+        float: The sum of the list elements.
+    """
     return sum(input_list)

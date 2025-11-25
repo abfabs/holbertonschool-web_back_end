@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Module 4-define_variables: defines variables with type annotations."""
+"""
+This module defines and annotates several variables of different types.
+"""
 
 a: int = 1
 pi: float = 3.14
