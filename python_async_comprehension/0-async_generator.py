@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module 0-async_generator:
-An asynchronous generator that yields 10 random numbers with a 1-second delay.
+Asynchronous generator that yields 10 random numbers with 1-second delay.
 """
 import asyncio
 import random
