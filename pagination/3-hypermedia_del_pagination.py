@@ -21,6 +21,7 @@ class Server:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
+            # Remove header
             self.__dataset = dataset[1:]
         return self.__dataset
 
@@ -28,7 +29,6 @@ class Server:
         """Dataset indexed by sorting position, starting at 0."""
         if self.__indexed_dataset is None:
             dataset = self.dataset()
-            # Create a copy indexed by position
             self.__indexed_dataset = {
                 i: row for i, row in enumerate(dataset)
             }
@@ -36,24 +36,27 @@ class Server:
 
     def get_hyper_index(self, index: int = None,
                         page_size: int = 10) -> Dict:
-        """Return a deletion-resilient hypermedia pagination structure."""
+        """
+        Return a deletion-resilient hypermedia pagination structure.
+        """
         data = self.indexed_dataset()
+        max_key = max(data.keys())
 
         assert index is not None
         assert isinstance(index, int)
         assert index >= 0
-        assert index < len(data)
+        assert index <= max_key
 
         page_data = []
         current = index
 
-        # Collect page_size items, skipping deleted ones
-        while len(page_data) < page_size and current < max(data.keys()) + 1:
+        # Collect page_size available items
+        while len(page_data) < page_size and current <= max_key:
             if current in data:
                 page_data.append(data[current])
             current += 1
 
-        next_index = current if current <= max(data.keys()) else None
+        next_index = current if current <= max_key else None
 
         return {
             "index": index,
