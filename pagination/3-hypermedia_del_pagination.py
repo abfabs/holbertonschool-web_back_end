@@ -21,7 +21,6 @@ class Server:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
-            # Remove header
             self.__dataset = dataset[1:]
         return self.__dataset
 
@@ -34,11 +33,8 @@ class Server:
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = None,
-                        page_size: int = 10) -> Dict:
-        """
-        Return a deletion-resilient hypermedia pagination structure.
-        """
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+        """Return a deletion-resilient hypermedia pagination structure."""
         data = self.indexed_dataset()
         max_key = max(data.keys())
 
@@ -50,7 +46,6 @@ class Server:
         page_data = []
         current = index
 
-        # Collect page_size available items
         while len(page_data) < page_size and current <= max_key:
             if current in data:
                 page_data.append(data[current])
