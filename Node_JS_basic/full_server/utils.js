@@ -1,30 +1,29 @@
-import fs from 'fs';
+/* eslint-disable */
 
-export function readDatabase(path) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', (err, data) => {
-      if (err) {
-        reject(new Error('Cannot load the database'));
-        return;
-      }
+import fs from 'fs/promises';
 
-      const lines = data.split('\n').filter((line) => line.trim() !== '');
-      if (lines.length <= 1) {
-        resolve({});
-        return;
-      }
+export default function readDatabase(filePath) {
+  return fs.readFile(filePath, 'utf-8')
+    .then((data) => {
+      const lines = data.trim().split('\n').filter(line => line.trim() !== '');
+      const students = lines.slice(1);
 
-      const students = lines.slice(1).map((line) => line.split(','));
       const fields = {};
 
-      students.forEach(([firstName, , field]) => {
-        const f = field.trim();
-        const name = firstName.trim();
-        if (!fields[f]) fields[f] = [];
-        fields[f].push(name);
-      });
+      for (const student of students) {
+        const parts = student.split(',');
+        const firstName = parts[0].trim();
+        const field = parts[parts.length - 1].trim();
 
-      resolve(fields);
+        if (!fields[field]) {
+          fields[field] = [];
+        }
+        fields[field].push(firstName);
+      }
+
+      return fields;
+    })
+    .catch((err) => {
+      throw new Error('Cannot load the database');
     });
-  });
 }

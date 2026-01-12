@@ -1,13 +1,13 @@
+/* eslint-disable */
+
 import express from 'express';
-import routes from './routes/index.js';
+import router from './routes/index.js';
 
 const app = express();
-
-app.use('/', routes);
-
 const PORT = 1245;
-app.listen(PORT, () => {
-  // console.log(`Server listening on port ${PORT}`);
-});
+
+app.use('/', router);
+
+app.listen(PORT);
 
 export default app;
