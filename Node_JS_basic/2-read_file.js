@@ -1,41 +1,49 @@
 const fs = require('fs');
 
-function countStudents(path) {
-  let data;
-
+function countStudents(filepath) {
   try {
-    data = fs.readFileSync(path, 'utf8');
+    const csv = fs.readFileSync(filepath, { encoding: 'utf8' });
+    const headerArray = csv.split(/\r?\n|\n/);
+    const headers = headerArray[0].split(',');
+
+    // strip headers and convert to list of dicts
+    const dictList = [];
+    const noHeaderArray = headerArray.slice(1);
+    for (let i = 0; i < noHeaderArray.length; i += 1) {
+      const data = noHeaderArray[i].split(',');
+      if (data.length === headers.length) {
+        const row = {};
+        for (let j = 0; j < headers.length; j += 1) {
+          row[headers[j].trim()] = data[j].trim();
+        }
+        dictList.push(row);
+      }
+    }
+
+    // count and collect first names of students per field
+    let countCS = 0;
+    let countSWE = 0;
+    const studentsCS = [];
+    const studentsSWE = [];
+
+    dictList.forEach((element) => {
+      if (element.field === 'CS') {
+        countCS += 1;
+        studentsCS.push(element.firstname);
+      } else if (element.field === 'SWE') {
+        countSWE += 1;
+        studentsSWE.push(element.firstname);
+      }
+    });
+
+    const countStudents = countCS + countSWE;
+
+    // print statements
+    console.log(`Number of students: ${countStudents}`);
+    console.log(`Number of students in CS: ${countCS}. List: ${studentsCS.toString().split(',').join(', ')}`);
+    console.log(`Number of students in SWE: ${countSWE}. List: ${studentsSWE.toString().split(',').join(', ')}`);
   } catch (err) {
     throw new Error('Cannot load the database');
-  }
-
-  // Split lines and remove empty lines
-  const lines = data.split('\n').filter((line) => line.trim() !== '');
-  if (lines.length === 0) {
-    console.log('Number of students: 0');
-    return;
-  }
-
-  // Skip header
-  const students = lines.slice(1).map((line) => line.split(','));
-
-  console.log(`Number of students: ${students.length}`);
-
-  const fields = {};
-
-  students.forEach(([firstName, , field]) => {
-    const cleanField = field.trim();
-    const cleanName = firstName.trim();
-    if (!fields[cleanField]) {
-      fields[cleanField] = [];
-    }
-    fields[cleanField].push(cleanName);
-  });
-
-  for (const field in fields) {
-    console.log(
-      `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`
-    );
   }
 }
 
